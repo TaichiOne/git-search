@@ -1,9 +1,9 @@
 import { observer } from "mobx-react-lite";
 import { favoritesStore } from "../store";
 import { TRepository } from "../types";
+
 import IconStar from "./icons/IconStar";
 import IconFork from "./icons/IconFork";
-
 import IconFavoriteEmpty from "./icons/IconFavoriteEmpty";
 import IconFavoriteFill from "./icons/IconFavoriteFill";
 

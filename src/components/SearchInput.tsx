@@ -3,10 +3,11 @@ import throttle from "lodash/throttle";
 import { ChangeEventHandler } from "react";
 
 interface SearchInputProps {
+  inputValue: string;
   handleChange: ChangeEventHandler<HTMLInputElement>;
 }
 
-const SearchInput = ({ handleChange }: SearchInputProps) => {
+const SearchInput = ({ inputValue, handleChange }: SearchInputProps) => {
   const throttledOnChange = throttle(handleChange, 1000);
 
   return (
@@ -15,6 +16,7 @@ const SearchInput = ({ handleChange }: SearchInputProps) => {
         <input
           type="text"
           id="inputField"
+          value={inputValue}
           onChange={throttledOnChange}
           placeholder="Введите текст"
           className="w-full py-2 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

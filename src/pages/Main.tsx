@@ -5,10 +5,15 @@ import RepositoriesList from "../components/RepositoriesList";
 import { favoritesStore } from "../store";
 import { observer } from "mobx-react-lite";
 import { ChangeEventHandler, useState } from "react";
+import debounce from "lodash/debounce";
+
+const fetchData = async (inputValue: string) =>
+  inputValue.trim() === "" ? [] : fetchGitHubData({ query: inputValue });
+
+const debouncedFetchData = debounce(fetchData, 400);
 
 const Main = () => {
   const [inputValue, setInputValue] = useState<string>("");
-
   const { data, isLoading, error } = useQuery(
     "githubData",
     () => {
@@ -20,6 +25,12 @@ const Main = () => {
     },
     { enabled: inputValue.trim() !== "" }
   );
+
+  const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const query = event.target.value;
+    setInputValue(query);
+    debouncedFetchData(query);
+  };
 
   const renderLoading = () => (
     <div className="w-full text-center mt-4 text-[#E6EDE3] text-lg">
@@ -33,18 +44,9 @@ const Main = () => {
     </div>
   );
 
-  const renderEmptyList = () => (
-    <div className="text-xl font-medium">Список пуст!</div>
-  );
-
-  const onChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    console.log("Changed value:", event.target.value);
-    fetchGitHubData({ query: event.target.value });
-  };
-
   const renderData = () => {
     if (data?.length === 0) {
-      return renderEmptyList();
+      return <div className="text-xl font-medium">Список пуст!</div>;
     }
 
     return (
@@ -70,7 +72,7 @@ const Main = () => {
   return (
     <div className="px-4 mx-auto max-w-screen-xl lg:px-6 w-full">
       <div className="my-6">
-        <SearchInput handleChange={onChange} />
+        <SearchInput inputValue={inputValue} handleChange={handleChange} />
       </div>
       {isLoading ? renderLoading() : error ? renderError() : renderData()}
     </div>
